@@ -1,0 +1,9 @@
+/* Base reset — index.css handles minimal setup, App.css handles theming */
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
