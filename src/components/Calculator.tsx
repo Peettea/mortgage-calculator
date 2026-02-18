@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Controller } from 'react-hook-form';
 import { InputField } from './InputField';
 import { ResultsDisplay } from './ResultsDisplay';
 import { AmortizationCharts } from './AmortizationCharts';
@@ -8,11 +9,10 @@ import { useMortgage } from '../hooks/useMortgage';
 /**
  * Hlavní komponenta kalkulačky
  *
- * Díky custom hooku useMortgage obsahuje jen UI logiku.
- * Veškeré výpočty a state management jsou v hooku.
+ * Používá React Hook Form přes Controller komponentu,
+ * která propojuje formulářovou logiku s našimi InputField komponentami.
  */
 export const Calculator = () => {
-  // Dark mode state
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('mortgage-dark-mode');
     if (saved !== null) return saved === 'true';
@@ -24,21 +24,12 @@ export const Calculator = () => {
     localStorage.setItem('mortgage-dark-mode', String(darkMode));
   }, [darkMode]);
 
-  // Veškerá logika kalkulačky je teď v hooku
-  const {
-    inputs,
-    results,
-    errors,
-    amortizationSchedule,
-    updateLoanAmount,
-    updateInterestRate,
-    updateLoanPeriod,
-  } = useMortgage();
+  const { form, inputs, results, amortizationSchedule } = useMortgage();
 
   return (
     <div className="calculator fade-in">
       <div className="calculator-header">
-        <h1>💰 Hypoteční kalkulačka</h1>
+        <h1>Hypoteční kalkulačka</h1>
         <button
           className="theme-toggle"
           onClick={() => setDarkMode(!darkMode)}
@@ -50,44 +41,62 @@ export const Calculator = () => {
 
       <div className="calculator-content">
         <div className="inputs-section">
-          <InputField
-            label="Výše úvěru"
-            value={inputs.loanAmount}
-            onChange={updateLoanAmount}
-            error={errors.loanAmount}
-            suffix="Kč"
-            step={100000}
-            sliderMin={100000}
-            sliderMax={15000000}
-            sliderStep={100000}
+          <Controller
+            name="loanAmount"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <InputField
+                label="Výše úvěru"
+                value={field.value}
+                onChange={field.onChange}
+                error={fieldState.error?.message}
+                suffix="Kč"
+                step={100000}
+                sliderMin={100000}
+                sliderMax={15000000}
+                sliderStep={100000}
+              />
+            )}
           />
 
-          <InputField
-            label="Úroková sazba"
-            value={inputs.interestRate}
-            onChange={updateInterestRate}
-            error={errors.interestRate}
-            suffix="%"
-            step={0.1}
-            min={0}
-            max={100}
-            sliderMin={0}
-            sliderMax={15}
-            sliderStep={0.1}
+          <Controller
+            name="interestRate"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <InputField
+                label="Úroková sazba"
+                value={field.value}
+                onChange={field.onChange}
+                error={fieldState.error?.message}
+                suffix="%"
+                step={0.1}
+                min={0}
+                max={100}
+                sliderMin={0}
+                sliderMax={15}
+                sliderStep={0.1}
+              />
+            )}
           />
 
-          <InputField
-            label="Doba splácení"
-            value={inputs.loanPeriodYears}
-            onChange={updateLoanPeriod}
-            error={errors.loanPeriodYears}
-            suffix="let"
-            step={1}
-            min={1}
-            max={50}
-            sliderMin={1}
-            sliderMax={40}
-            sliderStep={1}
+          <Controller
+            name="loanPeriodYears"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <InputField
+                label="Doba splácení"
+                value={field.value}
+                onChange={field.onChange}
+                error={fieldState.error?.message}
+                suffix="let"
+                step={1}
+                min={1}
+                max={50}
+                sliderMin={1}
+                sliderMax={40}
+                sliderStep={1}
+              />
+            )}
           />
         </div>
 

@@ -1,68 +1,61 @@
-import { useState, useEffect, useMemo } from 'react';
-import { calculateMortgage, validateInputs, generateAmortizationSchedule } from '../utils/mortgageCalculations';
-import type { MortgageInputs, MortgageResults, ValidationErrors, AmortizationEntry } from '../types/mortgage';
+import { useMemo } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { mortgageSchema, type MortgageFormData } from '../schemas/mortgageSchema';
+import { calculateMortgage, generateAmortizationSchedule } from '../utils/mortgageCalculations';
 
 /**
  * Custom hook pro hypoteční kalkulačku
  *
- * Obsahuje veškerou logiku:
- * - state pro vstupy
- * - validaci
- * - výpočty
- * - amortizační plán
- *
- * Komponenta pak jen zobrazuje data, která hook vrátí.
+ * Teď používá React Hook Form + Zod místo ručního state managementu.
+ * - useForm: spravuje hodnoty formuláře a validaci
+ * - zodResolver: propojuje Zod schéma s React Hook Form
+ * - useWatch: sleduje změny hodnot pro live přepočet
  */
 export const useMortgage = () => {
-  const [inputs, setInputs] = useState<MortgageInputs>({
-    loanAmount: 3000000,
-    interestRate: 4.5,
-    loanPeriodYears: 25,
+  const form = useForm<MortgageFormData>({
+    resolver: zodResolver(mortgageSchema),
+    defaultValues: {
+      loanAmount: 3000000,
+      interestRate: 4.5,
+      loanPeriodYears: 25,
+    },
+    mode: 'onChange', // validuje při každé změně
   });
 
-  const [results, setResults] = useState<MortgageResults | null>(null);
-  const [errors, setErrors] = useState<ValidationErrors>({});
+  // Sleduj aktuální hodnoty formuláře pro live přepočet
+  const inputs = useWatch({ control: form.control });
 
-  // Automatický přepočet při změně vstupů
-  useEffect(() => {
-    const validationErrors = validateInputs(inputs);
-    setErrors(validationErrors);
+  // Výpočet výsledků — přepočítá se při každé změně vstupů
+  const results = useMemo(() => {
+    const { loanAmount, interestRate, loanPeriodYears } = inputs;
+    if (!loanAmount || !loanPeriodYears || interestRate == null) return null;
+    if (loanAmount <= 0 || loanPeriodYears <= 0 || interestRate < 0) return null;
 
-    if (Object.keys(validationErrors).length === 0) {
-      const calculatedResults = calculateMortgage(inputs);
-      setResults(calculatedResults);
-    } else {
-      setResults(null);
-    }
+    return calculateMortgage({
+      loanAmount,
+      interestRate,
+      loanPeriodYears,
+    });
   }, [inputs]);
 
   // Amortizační plán
-  const amortizationSchedule = useMemo<AmortizationEntry[]>(() => {
-    if (!results) return [];
-    return generateAmortizationSchedule(inputs, results.monthlyPayment);
+  const amortizationSchedule = useMemo(() => {
+    if (!results || !inputs.loanAmount || !inputs.interestRate == null || !inputs.loanPeriodYears) return [];
+    return generateAmortizationSchedule(
+      { loanAmount: inputs.loanAmount!, interestRate: inputs.interestRate!, loanPeriodYears: inputs.loanPeriodYears! },
+      results.monthlyPayment
+    );
   }, [inputs, results]);
 
-  // Update funkce
-  const updateLoanAmount = (value: number) => {
-    setInputs(prev => ({ ...prev, loanAmount: value }));
-  };
-
-  const updateInterestRate = (value: number) => {
-    setInputs(prev => ({ ...prev, interestRate: value }));
-  };
-
-  const updateLoanPeriod = (value: number) => {
-    setInputs(prev => ({ ...prev, loanPeriodYears: value }));
-  };
-
-  // Hook vrací vše, co komponenta potřebuje
   return {
-    inputs,
+    form,
+    inputs: {
+      loanAmount: inputs.loanAmount ?? 3000000,
+      interestRate: inputs.interestRate ?? 4.5,
+      loanPeriodYears: inputs.loanPeriodYears ?? 25,
+    },
     results,
-    errors,
     amortizationSchedule,
-    updateLoanAmount,
-    updateInterestRate,
-    updateLoanPeriod,
   };
 };
