@@ -1,0 +1,20 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// Tabulka pro uložené výpočty
+model Calculation {
+  id              Int      @id @default(autoincrement())
+  loanAmount      Float    // výše úvěru
+  interestRate    Float    // úroková sazba
+  loanPeriodYears Int      // doba splácení
+  monthlyPayment  Float    // vypočtená měsíční splátka
+  totalPaid       Float    // celkem zaplaceno
+  totalInterest   Float    // celkové úroky
+  createdAt       DateTime @default(now())
+}

@@ -10,6 +10,9 @@ export const Navigation = () => {
       <NavLink to="/" end>
         Kalkulačka
       </NavLink>
+      <NavLink to="/history">
+        Historie
+      </NavLink>
       <NavLink to="/about">
         O aplikaci
       </NavLink>

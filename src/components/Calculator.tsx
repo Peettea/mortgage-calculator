@@ -5,6 +5,7 @@ import { ResultsDisplay } from './ResultsDisplay';
 import { AmortizationCharts } from './AmortizationCharts';
 import { CostPieChart } from './CostPieChart';
 import { useMortgage } from '../hooks/useMortgage';
+import { saveCalculation } from '../api/calculations';
 
 /**
  * Hlavní komponenta kalkulačky
@@ -25,6 +26,27 @@ export const Calculator = () => {
   }, [darkMode]);
 
   const { form, inputs, results, amortizationSchedule } = useMortgage();
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+
+  const handleSave = async () => {
+    if (!results) return;
+    setSaveStatus('saving');
+    try {
+      await saveCalculation({
+        loanAmount: inputs.loanAmount,
+        interestRate: inputs.interestRate,
+        loanPeriodYears: inputs.loanPeriodYears,
+        monthlyPayment: results.monthlyPayment,
+        totalPaid: results.totalAmountPaid,
+        totalInterest: results.totalInterestPaid,
+      });
+      setSaveStatus('saved');
+      setTimeout(() => setSaveStatus('idle'), 2000);
+    } catch {
+      setSaveStatus('error');
+      setTimeout(() => setSaveStatus('idle'), 3000);
+    }
+  };
 
   return (
     <div className="calculator fade-in">
@@ -102,6 +124,21 @@ export const Calculator = () => {
 
         <ResultsDisplay results={results} schedule={amortizationSchedule} />
       </div>
+
+      {results && (
+        <div className="save-section">
+          <button
+            className="save-button"
+            onClick={handleSave}
+            disabled={saveStatus === 'saving'}
+          >
+            {saveStatus === 'idle' && 'Uložit výpočet'}
+            {saveStatus === 'saving' && 'Ukládání...'}
+            {saveStatus === 'saved' && 'Uloženo!'}
+            {saveStatus === 'error' && 'Chyba — je server spuštěný?'}
+          </button>
+        </div>
+      )}
 
       {results && (
         <CostPieChart results={results} inputs={inputs} />

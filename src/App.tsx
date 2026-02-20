@@ -2,13 +2,11 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Navigation } from './components/Navigation';
 import { CalculatorPage } from './pages/CalculatorPage';
 import { AboutPage } from './pages/AboutPage';
+import { HistoryPage } from './pages/HistoryPage';
 import './App.css';
 
 /**
  * Root komponenta — nastavuje routing (navigaci mezi stránkami)
- *
- * "/" → CalculatorPage (kalkulačka)
- * "/about" → AboutPage (o aplikaci)
  */
 function App() {
   return (
@@ -18,6 +16,7 @@ function App() {
           <Navigation />
           <Routes>
             <Route path="/" element={<CalculatorPage />} />
+            <Route path="/history" element={<HistoryPage />} />
             <Route path="/about" element={<AboutPage />} />
           </Routes>
         </div>
