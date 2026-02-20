@@ -1,47 +1,57 @@
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 import express from 'express';
 import cors from 'cors';
-import { PrismaClient } from '../src/generated/prisma/client.js';
+import Database from 'better-sqlite3';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const dbPath = join(__dirname, '..', 'prisma', 'dev.db');
+const db = new Database(dbPath);
+
+// Vytvoř tabulku pokud neexistuje
+db.exec(`
+  CREATE TABLE IF NOT EXISTS Calculation (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    loanAmount REAL NOT NULL,
+    interestRate REAL NOT NULL,
+    loanPeriodYears INTEGER NOT NULL,
+    monthlyPayment REAL NOT NULL,
+    totalPaid REAL NOT NULL,
+    totalInterest REAL NOT NULL,
+    createdAt TEXT DEFAULT (datetime('now'))
+  )
+`);
 
 const app = express();
-const prisma = new PrismaClient();
 const PORT = 3001;
 
-// Middleware
-app.use(cors());          // Povolí požadavky z frontendu (jiný port)
-app.use(express.json());  // Parsuje JSON body z požadavků
+app.use(cors());
+app.use(express.json());
 
 // GET /api/calculations — vrátí historii výpočtů (posledních 20)
-app.get('/api/calculations', async (_req, res) => {
-  const calculations = await prisma.calculation.findMany({
-    orderBy: { createdAt: 'desc' },
-    take: 20,
-  });
-  res.json(calculations);
+app.get('/api/calculations', (_req, res) => {
+  const rows = db.prepare(
+    'SELECT * FROM Calculation ORDER BY createdAt DESC LIMIT 20'
+  ).all();
+  res.json(rows);
 });
 
 // POST /api/calculations — uloží nový výpočet
-app.post('/api/calculations', async (req, res) => {
+app.post('/api/calculations', (req, res) => {
   const { loanAmount, interestRate, loanPeriodYears, monthlyPayment, totalPaid, totalInterest } = req.body;
 
-  const calculation = await prisma.calculation.create({
-    data: {
-      loanAmount,
-      interestRate,
-      loanPeriodYears,
-      monthlyPayment,
-      totalPaid,
-      totalInterest,
-    },
-  });
+  const result = db.prepare(
+    `INSERT INTO Calculation (loanAmount, interestRate, loanPeriodYears, monthlyPayment, totalPaid, totalInterest)
+     VALUES (?, ?, ?, ?, ?, ?)`
+  ).run(loanAmount, interestRate, loanPeriodYears, monthlyPayment, totalPaid, totalInterest);
 
-  res.status(201).json(calculation);
+  const row = db.prepare('SELECT * FROM Calculation WHERE id = ?').get(result.lastInsertRowid);
+  res.status(201).json(row);
 });
 
 // DELETE /api/calculations/:id — smaže výpočet
-app.delete('/api/calculations/:id', async (req, res) => {
-  await prisma.calculation.delete({
-    where: { id: Number(req.params.id) },
-  });
+app.delete('/api/calculations/:id', (req, res) => {
+  db.prepare('DELETE FROM Calculation WHERE id = ?').run(Number(req.params.id));
   res.status(204).send();
 });
 
