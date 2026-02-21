@@ -1265,3 +1265,24 @@ input[type="number"]::-webkit-outer-spin-button {
   color: var(--text-secondary);
   margin-bottom: 0.75rem;
 }
+
+/* ===========================================
+   Inflační pohled
+   =========================================== */
+.inflation-section {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow);
+  border-left: 4px solid #e67e22;
+}
+
+.inflation-controls {
+  max-width: 250px;
+  margin-bottom: 1.25rem;
+}
+
+.inflation-chart {
+  margin-top: 1rem;
+}

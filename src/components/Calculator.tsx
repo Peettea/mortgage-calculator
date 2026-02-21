@@ -8,6 +8,7 @@ import { useMortgage } from '../hooks/useMortgage';
 import { ExtraPayments } from './ExtraPayments';
 import { FixationSimulation } from './FixationSimulation';
 import { TaxDeduction } from './TaxDeduction';
+import { InflationView } from './InflationView';
 import { saveCalculation } from '../api/calculations';
 
 /**
@@ -153,6 +154,10 @@ export const Calculator = () => {
 
       {results && (
         <TaxDeduction inputs={inputs} results={results} />
+      )}
+
+      {results && (
+        <InflationView results={results} loanPeriodYears={inputs.loanPeriodYears} />
       )}
 
       {results && (

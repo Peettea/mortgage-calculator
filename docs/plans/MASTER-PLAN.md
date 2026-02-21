@@ -24,7 +24,7 @@
 
 ## Plánované funkce (v pořadí priority)
 
-### 1. Srovnání hypoték — STAV: ROZPRACOVÁNO
+### 1. Srovnání hypoték — HOTOVO
 - Nová stránka `/compare`
 - 2–3 plně editovatelné scénáře (každý má částku, sazbu, dobu)
 - Srovnávací tabulka + sloupcový graf (Recharts)
@@ -33,19 +33,22 @@
 - Tlačítka přidat/odebrat scénář
 - Responsivní (karty vedle sebe / pod sebou)
 
-### 2. Mimořádné splátky
-- Zadání jednorázové nebo pravidelné mimořádné splátky
-- Přepočet: kolik se ušetří na úrocích, o kolik se zkrátí doba
-- Vizuální porovnání "bez vs. s mimořádnou splátkou"
+### 2. Mimořádné splátky — HOTOVO
+- Pravidelná měsíční mimořádná splátka
+- Jednorázová mimořádná splátka v libovolném měsíci
+- Zobrazení úspory na úrocích a zkrácení doby
+- Horizontální graf porovnání úroků
 
-### 3. Fixace sazby + refinancování
-- Zadání délky fixace (např. 3, 5, 7 let)
-- Simulace: co se stane po konci fixace při nové sazbě
-- Porovnání: zůstat vs. refinancovat u jiné banky
+### 3. Fixace sazby + refinancování — HOTOVO
+- Výběr délky fixace (1, 3, 5, 7, 10 let)
+- Simulace nové sazby po fixaci
+- Porovnání 3 scénářů: současná / po fixaci / refinancování
+- Graf celkových úroků
 
-### 4. Daňový odpočet
+### 4. Daňový odpočet — HOTOVO
 - Výpočet odpočtu úroků z daní (max 150 000 Kč/rok v ČR)
-- Zobrazení reálné efektivní sazby po odpočtu
+- Tabulka prvních 5 let s detaily
+- Celková úspora na dani + efektivní sazba
 
 ### 5. Inflační pohled
 - Reálná hodnota splátky za 10, 20, 30 let
