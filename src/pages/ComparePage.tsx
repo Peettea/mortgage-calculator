@@ -5,7 +5,7 @@ import { ComparisonChart } from '../components/ComparisonChart';
 import { calculateMortgage } from '../utils/mortgageCalculations';
 import type { MortgageInputs } from '../types/mortgage';
 
-const SCENARIO_COLORS = ['#4a90d9', '#27ae60', '#e67e22'];
+const SCENARIO_COLORS = ['#818cf8', '#34d399', '#fbbf24'];
 const SCENARIO_NAMES = ['Scénář A', 'Scénář B', 'Scénář C'];
 
 const defaultScenario = (): MortgageInputs => ({

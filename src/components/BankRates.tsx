@@ -17,7 +17,6 @@ const fmt = (amount: number): string =>
   }).format(amount);
 
 export const BankRates: React.FC<BankRatesProps> = ({ loanAmount, loanPeriodYears, onSelectRate }) => {
-  const [expanded, setExpanded] = useState(false);
   const fixations = getUniqueFixations();
   const [selectedFixation, setSelectedFixation] = useState(5);
 
@@ -31,21 +30,8 @@ export const BankRates: React.FC<BankRatesProps> = ({ loanAmount, loanPeriodYear
       .sort((a, b) => a.rate - b.rate);
   }, [selectedFixation, loanAmount, loanPeriodYears]);
 
-  if (!expanded) {
-    return (
-      <button className="extra-payments-toggle" onClick={() => setExpanded(true)}>
-        + Aktuální sazby bank
-      </button>
-    );
-  }
-
   return (
     <div className="bank-rates-section">
-      <div className="extra-payments-header">
-        <h2>Aktuální sazby bank</h2>
-        <button className="scenario-remove" onClick={() => setExpanded(false)}>✕</button>
-      </div>
-
       <p className="tax-info">
         Orientační sazby českých bank. Poslední aktualizace: {LAST_UPDATED}.
         Klikni na řádek pro použití sazby v kalkulačce.

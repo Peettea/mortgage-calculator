@@ -120,15 +120,15 @@ export const AmortizationCharts: React.FC<AmortizationChartsProps> = ({ schedule
                     <AreaChart data={balanceData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
                         <defs>
                             <linearGradient id="colorBalance" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#667eea" stopOpacity={0.8} />
-                                <stop offset="95%" stopColor="#667eea" stopOpacity={0.1} />
+                                <stop offset="5%" stopColor="#818cf8" stopOpacity={0.8} />
+                                <stop offset="95%" stopColor="#818cf8" stopOpacity={0.05} />
                             </linearGradient>
                             <linearGradient id="colorPaid" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#16a34a" stopOpacity={0.8} />
-                                <stop offset="95%" stopColor="#16a34a" stopOpacity={0.1} />
+                                <stop offset="5%" stopColor="#34d399" stopOpacity={0.8} />
+                                <stop offset="95%" stopColor="#34d399" stopOpacity={0.05} />
                             </linearGradient>
                         </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
                         <XAxis
                             dataKey="year"
                             tickFormatter={(v) => `${v}. rok`}
@@ -149,7 +149,7 @@ export const AmortizationCharts: React.FC<AmortizationChartsProps> = ({ schedule
                             type="monotone"
                             dataKey="zůstatek"
                             name="Zbývající dluh"
-                            stroke="#667eea"
+                            stroke="#818cf8"
                             fill="url(#colorBalance)"
                             strokeWidth={2}
                         />
@@ -157,7 +157,7 @@ export const AmortizationCharts: React.FC<AmortizationChartsProps> = ({ schedule
                             type="monotone"
                             dataKey="splaceno"
                             name="Splacená jistina"
-                            stroke="#16a34a"
+                            stroke="#34d399"
                             fill="url(#colorPaid)"
                             strokeWidth={2}
                         />
@@ -172,15 +172,15 @@ export const AmortizationCharts: React.FC<AmortizationChartsProps> = ({ schedule
                     <AreaChart data={paymentBreakdownData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
                         <defs>
                             <linearGradient id="colorPrincipal" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#2563eb" stopOpacity={0.8} />
-                                <stop offset="95%" stopColor="#2563eb" stopOpacity={0.2} />
+                                <stop offset="5%" stopColor="#6366f1" stopOpacity={0.8} />
+                                <stop offset="95%" stopColor="#6366f1" stopOpacity={0.1} />
                             </linearGradient>
                             <linearGradient id="colorInterest" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.8} />
-                                <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.2} />
+                                <stop offset="5%" stopColor="#fbbf24" stopOpacity={0.8} />
+                                <stop offset="95%" stopColor="#fbbf24" stopOpacity={0.1} />
                             </linearGradient>
                         </defs>
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
                         <XAxis
                             dataKey="year"
                             tickFormatter={(v) => `${v}. rok`}
@@ -201,7 +201,7 @@ export const AmortizationCharts: React.FC<AmortizationChartsProps> = ({ schedule
                             type="monotone"
                             dataKey="jistina"
                             name="Jistina"
-                            stroke="#2563eb"
+                            stroke="#6366f1"
                             fill="url(#colorPrincipal)"
                             strokeWidth={2}
                             stackId="1"
@@ -210,7 +210,7 @@ export const AmortizationCharts: React.FC<AmortizationChartsProps> = ({ schedule
                             type="monotone"
                             dataKey="úrok"
                             name="Úrok"
-                            stroke="#f59e0b"
+                            stroke="#fbbf24"
                             fill="url(#colorInterest)"
                             strokeWidth={2}
                             stackId="1"

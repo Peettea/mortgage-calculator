@@ -17,7 +17,6 @@ const fmt = (amount: number): string =>
   }).format(amount);
 
 export const FixationSimulation: React.FC<FixationSimulationProps> = ({ inputs }) => {
-  const [expanded, setExpanded] = useState(false);
   const [fixation, setFixation] = useState<FixationSettings>({
     fixationYears: 5,
     newRateAfter: inputs.interestRate + 1.5,
@@ -29,14 +28,6 @@ export const FixationSimulation: React.FC<FixationSimulationProps> = ({ inputs }
     [inputs, fixation]
   );
 
-  if (!expanded) {
-    return (
-      <button className="extra-payments-toggle" onClick={() => setExpanded(true)}>
-        + Simulace fixace sazby a refinancování
-      </button>
-    );
-  }
-
   const chartData = scenarios.map((s) => ({
     name: s.label.length > 30 ? s.label.substring(0, 28) + '...' : s.label,
     'Celkem úroky': s.totalInterest,
@@ -45,11 +36,6 @@ export const FixationSimulation: React.FC<FixationSimulationProps> = ({ inputs }
 
   return (
     <div className="fixation-section">
-      <div className="extra-payments-header">
-        <h2>Fixace sazby a refinancování</h2>
-        <button className="scenario-remove" onClick={() => setExpanded(false)}>✕</button>
-      </div>
-
       <div className="fixation-inputs">
         <div className="scenario-field">
           <label>Délka fixace</label>

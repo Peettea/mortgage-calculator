@@ -13,11 +13,20 @@ import { BankRates } from './BankRates';
 import { saveCalculation } from '../api/calculations';
 import { exportToPDF } from '../utils/pdfExport';
 
+type AnalysisTab = 'banks' | 'extra' | 'fixation' | 'tax' | 'inflation';
+
+const TABS: { id: AnalysisTab; label: string; icon: string }[] = [
+  { id: 'banks', label: 'Sazby bank', icon: '🏦' },
+  { id: 'extra', label: 'Mimořádné', icon: '💰' },
+  { id: 'fixation', label: 'Fixace', icon: '📌' },
+  { id: 'tax', label: 'Daně', icon: '📋' },
+  { id: 'inflation', label: 'Inflace', icon: '📈' },
+];
+
 /**
- * Hlavní komponenta kalkulačky
+ * Hlavní komponenta kalkulačky — dashboard layout
  *
- * Používá React Hook Form přes Controller komponentu,
- * která propojuje formulářovou logiku s našimi InputField komponentami.
+ * 2-column layout: inputy + tabbed analysis vlevo, sticky výsledky vpravo.
  */
 export const Calculator = () => {
   const [darkMode, setDarkMode] = useState(() => {
@@ -34,6 +43,7 @@ export const Calculator = () => {
   const { form, inputs, results, amortizationSchedule } = useMortgage();
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [shareStatus, setShareStatus] = useState<'idle' | 'copied'>('idle');
+  const [activeTab, setActiveTab] = useState<AnalysisTab>('banks');
 
   const handleShare = () => {
     const params = new URLSearchParams({
@@ -67,6 +77,28 @@ export const Calculator = () => {
     }
   };
 
+  const renderAnalysisContent = () => {
+    if (!results) return null;
+    switch (activeTab) {
+      case 'banks':
+        return (
+          <BankRates
+            loanAmount={inputs.loanAmount}
+            loanPeriodYears={inputs.loanPeriodYears}
+            onSelectRate={(rate) => form.setValue('interestRate', rate)}
+          />
+        );
+      case 'extra':
+        return <ExtraPayments inputs={inputs} results={results} />;
+      case 'fixation':
+        return <FixationSimulation inputs={inputs} results={results} />;
+      case 'tax':
+        return <TaxDeduction inputs={inputs} results={results} />;
+      case 'inflation':
+        return <InflationView results={results} loanPeriodYears={inputs.loanPeriodYears} />;
+    }
+  };
+
   return (
     <div className="calculator fade-in">
       <div className="calculator-header">
@@ -80,125 +112,132 @@ export const Calculator = () => {
         </button>
       </div>
 
-      <div className="calculator-content">
-        <div className="inputs-section">
-          <Controller
-            name="loanAmount"
-            control={form.control}
-            render={({ field, fieldState }) => (
-              <InputField
-                label="Výše úvěru"
-                value={field.value}
-                onChange={field.onChange}
-                error={fieldState.error?.message}
-                suffix="Kč"
-                step={100000}
-                sliderMin={100000}
-                sliderMax={15000000}
-                sliderStep={100000}
-              />
-            )}
-          />
+      {/* === DASHBOARD: 2-column layout === */}
+      <div className="dashboard-layout">
+        {/* LEFT COLUMN: Inputs + Actions */}
+        <div className="dashboard-left">
+          <div className="inputs-section">
+            <Controller
+              name="loanAmount"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <InputField
+                  label="Výše úvěru"
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={fieldState.error?.message}
+                  suffix="Kč"
+                  step={100000}
+                  sliderMin={100000}
+                  sliderMax={15000000}
+                  sliderStep={100000}
+                />
+              )}
+            />
 
-          <Controller
-            name="interestRate"
-            control={form.control}
-            render={({ field, fieldState }) => (
-              <InputField
-                label="Úroková sazba"
-                value={field.value}
-                onChange={field.onChange}
-                error={fieldState.error?.message}
-                suffix="%"
-                step={0.1}
-                min={0}
-                max={100}
-                sliderMin={0}
-                sliderMax={15}
-                sliderStep={0.1}
-              />
-            )}
-          />
+            <Controller
+              name="interestRate"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <InputField
+                  label="Úroková sazba"
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={fieldState.error?.message}
+                  suffix="%"
+                  step={0.1}
+                  min={0}
+                  max={100}
+                  sliderMin={0}
+                  sliderMax={15}
+                  sliderStep={0.1}
+                />
+              )}
+            />
 
-          <Controller
-            name="loanPeriodYears"
-            control={form.control}
-            render={({ field, fieldState }) => (
-              <InputField
-                label="Doba splácení"
-                value={field.value}
-                onChange={field.onChange}
-                error={fieldState.error?.message}
-                suffix="let"
-                step={1}
-                min={1}
-                max={50}
-                sliderMin={1}
-                sliderMax={40}
-                sliderStep={1}
-              />
-            )}
-          />
+            <Controller
+              name="loanPeriodYears"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <InputField
+                  label="Doba splácení"
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={fieldState.error?.message}
+                  suffix="let"
+                  step={1}
+                  min={1}
+                  max={50}
+                  sliderMin={1}
+                  sliderMax={40}
+                  sliderStep={1}
+                />
+              )}
+            />
+          </div>
+
+          {results && (
+            <div className="action-buttons">
+              <button
+                className="save-button"
+                onClick={handleSave}
+                disabled={saveStatus === 'saving'}
+              >
+                {saveStatus === 'idle' && '💾 Uložit'}
+                {saveStatus === 'saving' && 'Ukládání...'}
+                {saveStatus === 'saved' && '✓ Uloženo!'}
+                {saveStatus === 'error' && '✗ Chyba'}
+              </button>
+              <button
+                className="save-button pdf-button"
+                onClick={() => exportToPDF(inputs, results)}
+              >
+                📄 PDF
+              </button>
+              <button
+                className="save-button share-button"
+                onClick={handleShare}
+              >
+                {shareStatus === 'idle' ? '🔗 Sdílet' : '✓ Zkopírováno!'}
+              </button>
+            </div>
+          )}
         </div>
 
-        <ResultsDisplay results={results} schedule={amortizationSchedule} />
+        {/* RIGHT COLUMN: Sticky Results + Pie Chart */}
+        <div className="dashboard-right">
+          <div className="sticky-results">
+            <ResultsDisplay results={results} schedule={amortizationSchedule} />
+
+            {results && (
+              <CostPieChart results={results} inputs={inputs} />
+            )}
+          </div>
+        </div>
       </div>
 
+      {/* === TABBED ANALYSIS PANEL === */}
       {results && (
-        <div className="save-section">
-          <button
-            className="save-button"
-            onClick={handleSave}
-            disabled={saveStatus === 'saving'}
-          >
-            {saveStatus === 'idle' && 'Uložit výpočet'}
-            {saveStatus === 'saving' && 'Ukládání...'}
-            {saveStatus === 'saved' && 'Uloženo!'}
-            {saveStatus === 'error' && 'Chyba při ukládání'}
-          </button>
-          <button
-            className="save-button pdf-button"
-            onClick={() => exportToPDF(inputs, results)}
-          >
-            Stáhnout PDF
-          </button>
-          <button
-            className="save-button share-button"
-            onClick={handleShare}
-          >
-            {shareStatus === 'idle' ? 'Sdílet odkaz' : 'Zkopírováno!'}
-          </button>
+        <div className="analysis-panel">
+          <div className="analysis-tabs">
+            {TABS.map((tab) => (
+              <button
+                key={tab.id}
+                className={`analysis-tab ${activeTab === tab.id ? 'active' : ''}`}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                <span className="tab-icon">{tab.icon}</span>
+                <span className="tab-label">{tab.label}</span>
+              </button>
+            ))}
+          </div>
+          <div className="analysis-content">
+            {renderAnalysisContent()}
+          </div>
         </div>
       )}
 
-      {results && (
-        <BankRates
-          loanAmount={inputs.loanAmount}
-          loanPeriodYears={inputs.loanPeriodYears}
-          onSelectRate={(rate) => form.setValue('interestRate', rate)}
-        />
-      )}
-
-      {results && (
-        <ExtraPayments inputs={inputs} results={results} />
-      )}
-
-      {results && (
-        <FixationSimulation inputs={inputs} results={results} />
-      )}
-
-      {results && (
-        <TaxDeduction inputs={inputs} results={results} />
-      )}
-
-      {results && (
-        <InflationView results={results} loanPeriodYears={inputs.loanPeriodYears} />
-      )}
-
-      {results && (
-        <CostPieChart results={results} inputs={inputs} />
-      )}
-
+      {/* === AMORTIZATION CHARTS (full-width) === */}
       {results && amortizationSchedule.length > 0 && (
         <AmortizationCharts schedule={amortizationSchedule} />
       )}

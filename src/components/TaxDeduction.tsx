@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import type { MortgageInputs, MortgageResults } from '../types/mortgage';
 import { generateAmortizationSchedule } from '../utils/mortgageCalculations';
 
@@ -7,8 +7,8 @@ interface TaxDeductionProps {
   results: MortgageResults;
 }
 
-const MAX_DEDUCTION = 150000; // max odpočet úroků ročně v ČR
-const TAX_RATE = 0.15; // sazba daně z příjmu 15%
+const MAX_DEDUCTION = 150000;
+const TAX_RATE = 0.15;
 
 const fmt = (amount: number): string =>
   new Intl.NumberFormat('cs-CZ', {
@@ -19,12 +19,8 @@ const fmt = (amount: number): string =>
   }).format(amount);
 
 export const TaxDeduction: React.FC<TaxDeductionProps> = ({ inputs, results }) => {
-  const [expanded, setExpanded] = useState(false);
-
   const deduction = useMemo(() => {
     const schedule = generateAmortizationSchedule(inputs, results.monthlyPayment);
-
-    // Seskupit úroky po rocích
     const yearlyInterest: Record<number, number> = {};
     for (const entry of schedule) {
       yearlyInterest[entry.year] = (yearlyInterest[entry.year] || 0) + entry.interestPayment;
@@ -47,23 +43,10 @@ export const TaxDeduction: React.FC<TaxDeductionProps> = ({ inputs, results }) =
     return { years, totalTaxSaved, effectiveRate };
   }, [inputs, results]);
 
-  if (!expanded) {
-    return (
-      <button className="extra-payments-toggle" onClick={() => setExpanded(true)}>
-        + Daňový odpočet úroků
-      </button>
-    );
-  }
-
   const first5Years = deduction.years.slice(0, 5);
 
   return (
     <div className="tax-section">
-      <div className="extra-payments-header">
-        <h2>Daňový odpočet úroků</h2>
-        <button className="scenario-remove" onClick={() => setExpanded(false)}>✕</button>
-      </div>
-
       <p className="tax-info">
         V ČR si můžeš odečíst zaplacené úroky z hypotéky od základu daně
         (max {fmt(MAX_DEDUCTION)}/rok). Při sazbě {TAX_RATE * 100}% ti stát vrátí:

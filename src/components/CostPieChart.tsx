@@ -14,7 +14,7 @@ interface CostPieChartProps {
     inputs: MortgageInputs;
 }
 
-const COLORS = ['#2563eb', '#f59e0b'];
+const COLORS = ['#6366f1', '#fbbf24'];
 
 /**
  * Formátování měny pro tooltip
