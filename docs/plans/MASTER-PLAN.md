@@ -50,9 +50,10 @@
 - Tabulka prvních 5 let s detaily
 - Celková úspora na dani + efektivní sazba
 
-### 5. Inflační pohled
-- Reálná hodnota splátky za 10, 20, 30 let
-- Graf kupní síly splátky v čase
+### 5. Inflační pohled — HOTOVO
+- Nastavitelná míra inflace
+- Graf nominální vs. reálné hodnoty splátky
+- Pokles kupní síly v procentech
 
 ### 6. PDF export
 - Vygenerování PDF reportu s výpočtem

@@ -12,15 +12,20 @@ import { calculateMortgage, generateAmortizationSchedule } from '../utils/mortga
  * - zodResolver: propojuje Zod schéma s React Hook Form
  * - useWatch: sleduje změny hodnot pro live přepočet
  */
+const getDefaultsFromURL = () => {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    loanAmount: Number(params.get('a')) || 3000000,
+    interestRate: Number(params.get('r')) || 4.5,
+    loanPeriodYears: Number(params.get('y')) || 25,
+  };
+};
+
 export const useMortgage = () => {
   const form = useForm<MortgageFormData>({
     resolver: zodResolver(mortgageSchema),
-    defaultValues: {
-      loanAmount: 3000000,
-      interestRate: 4.5,
-      loanPeriodYears: 25,
-    },
-    mode: 'onChange', // validuje při každé změně
+    defaultValues: getDefaultsFromURL(),
+    mode: 'onChange',
   });
 
   // Sleduj aktuální hodnoty formuláře pro live přepočet

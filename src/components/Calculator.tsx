@@ -10,6 +10,7 @@ import { FixationSimulation } from './FixationSimulation';
 import { TaxDeduction } from './TaxDeduction';
 import { InflationView } from './InflationView';
 import { saveCalculation } from '../api/calculations';
+import { exportToPDF } from '../utils/pdfExport';
 
 /**
  * Hlavní komponenta kalkulačky
@@ -31,6 +32,19 @@ export const Calculator = () => {
 
   const { form, inputs, results, amortizationSchedule } = useMortgage();
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [shareStatus, setShareStatus] = useState<'idle' | 'copied'>('idle');
+
+  const handleShare = () => {
+    const params = new URLSearchParams({
+      a: String(inputs.loanAmount),
+      r: String(inputs.interestRate),
+      y: String(inputs.loanPeriodYears),
+    });
+    const url = `${window.location.origin}/?${params}`;
+    navigator.clipboard.writeText(url);
+    setShareStatus('copied');
+    setTimeout(() => setShareStatus('idle'), 2000);
+  };
 
   const handleSave = async () => {
     if (!results) return;
@@ -140,6 +154,18 @@ export const Calculator = () => {
             {saveStatus === 'saving' && 'Ukládání...'}
             {saveStatus === 'saved' && 'Uloženo!'}
             {saveStatus === 'error' && 'Chyba při ukládání'}
+          </button>
+          <button
+            className="save-button pdf-button"
+            onClick={() => exportToPDF(inputs, results)}
+          >
+            Stáhnout PDF
+          </button>
+          <button
+            className="save-button share-button"
+            onClick={handleShare}
+          >
+            {shareStatus === 'idle' ? 'Sdílet odkaz' : 'Zkopírováno!'}
           </button>
         </div>
       )}
