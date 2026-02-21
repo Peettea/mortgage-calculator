@@ -35,7 +35,7 @@ export const HistoryPage = () => {
       const data = await fetchCalculations();
       setCalculations(data);
     } catch {
-      setError('Nepodařilo se načíst historii. Je server spuštěný?');
+      setError('Nepodařilo se načíst historii.');
     } finally {
       setLoading(false);
     }
@@ -77,7 +77,7 @@ export const HistoryPage = () => {
           {calculations.map((calc) => (
             <div key={calc.id} className="history-card">
               <div className="history-card-header">
-                <span className="history-date">{formatDate(calc.createdAt)}</span>
+                <span className="history-date">{formatDate(calc.created_at)}</span>
                 <button
                   className="history-delete"
                   onClick={() => handleDelete(calc.id)}
@@ -89,19 +89,19 @@ export const HistoryPage = () => {
               <div className="history-card-body">
                 <div className="history-stat">
                   <span className="history-label">Úvěr</span>
-                  <span className="history-value">{formatCurrency(calc.loanAmount)}</span>
+                  <span className="history-value">{formatCurrency(calc.loan_amount)}</span>
                 </div>
                 <div className="history-stat">
                   <span className="history-label">Sazba</span>
-                  <span className="history-value">{calc.interestRate} %</span>
+                  <span className="history-value">{calc.interest_rate} %</span>
                 </div>
                 <div className="history-stat">
                   <span className="history-label">Doba</span>
-                  <span className="history-value">{calc.loanPeriodYears} let</span>
+                  <span className="history-value">{calc.loan_period_years} let</span>
                 </div>
                 <div className="history-stat primary">
                   <span className="history-label">Splátka</span>
-                  <span className="history-value">{formatCurrency(calc.monthlyPayment)}</span>
+                  <span className="history-value">{formatCurrency(calc.monthly_payment)}</span>
                 </div>
               </div>
             </div>

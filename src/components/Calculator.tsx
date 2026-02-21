@@ -33,12 +33,12 @@ export const Calculator = () => {
     setSaveStatus('saving');
     try {
       await saveCalculation({
-        loanAmount: inputs.loanAmount,
-        interestRate: inputs.interestRate,
-        loanPeriodYears: inputs.loanPeriodYears,
-        monthlyPayment: results.monthlyPayment,
-        totalPaid: results.totalAmountPaid,
-        totalInterest: results.totalInterestPaid,
+        loan_amount: inputs.loanAmount,
+        interest_rate: inputs.interestRate,
+        loan_period_years: inputs.loanPeriodYears,
+        monthly_payment: results.monthlyPayment,
+        total_paid: results.totalAmountPaid,
+        total_interest: results.totalInterestPaid,
       });
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus('idle'), 2000);
@@ -135,7 +135,7 @@ export const Calculator = () => {
             {saveStatus === 'idle' && 'Uložit výpočet'}
             {saveStatus === 'saving' && 'Ukládání...'}
             {saveStatus === 'saved' && 'Uloženo!'}
-            {saveStatus === 'error' && 'Chyba — je server spuštěný?'}
+            {saveStatus === 'error' && 'Chyba při ukládání'}
           </button>
         </div>
       )}

@@ -17,6 +17,7 @@
     "@libsql/client": "^0.17.0",
     "@prisma/adapter-libsql": "^7.4.1",
     "@prisma/client": "^7.4.1",
+    "@supabase/supabase-js": "^2.97.0",
     "better-sqlite3": "^12.6.2",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
