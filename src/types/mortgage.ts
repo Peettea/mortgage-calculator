@@ -46,6 +46,23 @@ export interface ExtraPaymentComparison {
   };
 }
 
+// Nastavení fixace sazby
+export interface FixationSettings {
+  fixationYears: number;      // délka fixace v letech (3, 5, 7, 10)
+  newRateAfter: number;       // nová sazba po skončení fixace v %
+  refinanceRate: number;      // sazba u jiné banky v %
+}
+
+// Výsledky simulace fixace
+export interface FixationResult {
+  label: string;
+  monthlyPaymentBefore: number;
+  monthlyPaymentAfter: number;
+  totalInterest: number;
+  totalPaid: number;
+  color: string;
+}
+
 // Chybové hlášky pro validaci
 export interface ValidationErrors {
   loanAmount?: string;

@@ -1155,3 +1155,84 @@ input[type="number"]::-webkit-outer-spin-button {
     grid-template-columns: 1fr;
   }
 }
+
+/* ===========================================
+   Fixace sazby a refinancování
+   =========================================== */
+.fixation-section {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow);
+  border-left: 4px solid #e67e22;
+}
+
+.fixation-inputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.fixation-select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: var(--bg-color);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.fixation-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.fixation-results {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.fixation-card {
+  background: var(--bg-color);
+  border-radius: 10px;
+  padding: 1rem;
+  border-left: 4px solid;
+}
+
+.fixation-card-label {
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.fixation-card-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  text-align: center;
+}
+
+.fixation-card-stats .savings-label {
+  font-size: 0.75rem;
+}
+
+.fixation-card-stats .savings-value {
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  .fixation-inputs {
+    grid-template-columns: 1fr;
+  }
+
+  .fixation-card-stats {
+    grid-template-columns: 1fr;
+  }
+}

@@ -6,6 +6,7 @@ import { AmortizationCharts } from './AmortizationCharts';
 import { CostPieChart } from './CostPieChart';
 import { useMortgage } from '../hooks/useMortgage';
 import { ExtraPayments } from './ExtraPayments';
+import { FixationSimulation } from './FixationSimulation';
 import { saveCalculation } from '../api/calculations';
 
 /**
@@ -143,6 +144,10 @@ export const Calculator = () => {
 
       {results && (
         <ExtraPayments inputs={inputs} results={results} />
+      )}
+
+      {results && (
+        <FixationSimulation inputs={inputs} results={results} />
       )}
 
       {results && (

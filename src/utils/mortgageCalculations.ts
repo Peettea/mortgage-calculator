@@ -1,4 +1,4 @@
-import type { MortgageInputs, MortgageResults, ValidationErrors, AmortizationEntry, ExtraPaymentSettings, ExtraPaymentComparison } from '../types/mortgage';
+import type { MortgageInputs, MortgageResults, ValidationErrors, AmortizationEntry, ExtraPaymentSettings, ExtraPaymentComparison, FixationSettings, FixationResult } from '../types/mortgage';
 
 /**
  * Vypočítá hypoteční splátky pomocí vzorce pro anuitní splátky
@@ -195,4 +195,97 @@ export const calculateWithExtraPayments = (
       interestSaved: Math.round(normalInterest - cumulativeInterest),
     },
   };
+};
+
+/**
+ * Simuluje fixaci sazby — co se stane po konci fixace
+ * Vrací 3 scénáře: zůstat u banky (nová sazba), refinancovat, původní sazba celou dobu
+ */
+export const calculateFixation = (
+  inputs: MortgageInputs,
+  fixation: FixationSettings
+): FixationResult[] => {
+  const { loanAmount, interestRate, loanPeriodYears } = inputs;
+  const totalMonths = loanPeriodYears * 12;
+  const fixationMonths = fixation.fixationYears * 12;
+
+  const simulate = (rateBefore: number, rateAfter: number) => {
+    const monthlyRateBefore = rateBefore / 100 / 12;
+    const monthlyRateAfter = rateAfter / 100 / 12;
+    let remaining = loanAmount;
+    let totalInterest = 0;
+    let paymentBefore = 0;
+    let paymentAfter = 0;
+
+    // Fáze 1: fixace
+    if (rateBefore === 0) {
+      paymentBefore = loanAmount / totalMonths;
+    } else {
+      const p = Math.pow(1 + monthlyRateBefore, totalMonths);
+      paymentBefore = loanAmount * (monthlyRateBefore * p) / (p - 1);
+    }
+
+    for (let m = 1; m <= fixationMonths && remaining > 0; m++) {
+      const interest = remaining * monthlyRateBefore;
+      const principal = Math.min(paymentBefore - interest, remaining);
+      remaining -= principal;
+      totalInterest += interest;
+    }
+
+    // Fáze 2: po fixaci
+    const remainingMonths = totalMonths - fixationMonths;
+    if (remaining > 0 && remainingMonths > 0) {
+      if (rateAfter === 0) {
+        paymentAfter = remaining / remainingMonths;
+      } else {
+        const p = Math.pow(1 + monthlyRateAfter, remainingMonths);
+        paymentAfter = remaining * (monthlyRateAfter * p) / (p - 1);
+      }
+
+      for (let m = 1; m <= remainingMonths && remaining > 0; m++) {
+        const interest = remaining * monthlyRateAfter;
+        const principal = Math.min(paymentAfter - interest, remaining);
+        remaining -= principal;
+        totalInterest += interest;
+      }
+    }
+
+    return {
+      paymentBefore: Math.round(paymentBefore),
+      paymentAfter: Math.round(paymentAfter || paymentBefore),
+      totalInterest: Math.round(totalInterest),
+      totalPaid: Math.round(loanAmount + totalInterest),
+    };
+  };
+
+  const current = simulate(interestRate, interestRate);
+  const afterFixation = simulate(interestRate, fixation.newRateAfter);
+  const refinanced = simulate(interestRate, fixation.refinanceRate);
+
+  return [
+    {
+      label: `Současná sazba celou dobu (${interestRate}%)`,
+      monthlyPaymentBefore: current.paymentBefore,
+      monthlyPaymentAfter: current.paymentAfter,
+      totalInterest: current.totalInterest,
+      totalPaid: current.totalPaid,
+      color: '#4a90d9',
+    },
+    {
+      label: `Po fixaci nová sazba (${fixation.newRateAfter}%)`,
+      monthlyPaymentBefore: afterFixation.paymentBefore,
+      monthlyPaymentAfter: afterFixation.paymentAfter,
+      totalInterest: afterFixation.totalInterest,
+      totalPaid: afterFixation.totalPaid,
+      color: '#e67e22',
+    },
+    {
+      label: `Refinancování (${fixation.refinanceRate}%)`,
+      monthlyPaymentBefore: refinanced.paymentBefore,
+      monthlyPaymentAfter: refinanced.paymentAfter,
+      totalInterest: refinanced.totalInterest,
+      totalPaid: refinanced.totalPaid,
+      color: '#27ae60',
+    },
+  ];
 };
