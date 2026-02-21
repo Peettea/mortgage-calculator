@@ -3,6 +3,7 @@ import { Navigation } from './components/Navigation';
 import { CalculatorPage } from './pages/CalculatorPage';
 import { AboutPage } from './pages/AboutPage';
 import { HistoryPage } from './pages/HistoryPage';
+import { ComparePage } from './pages/ComparePage';
 import './App.css';
 
 /**
@@ -16,6 +17,7 @@ function App() {
           <Navigation />
           <Routes>
             <Route path="/" element={<CalculatorPage />} />
+            <Route path="/compare" element={<ComparePage />} />
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/about" element={<AboutPage />} />
           </Routes>

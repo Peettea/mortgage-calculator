@@ -10,6 +10,9 @@ export const Navigation = () => {
       <NavLink to="/" end>
         Kalkulačka
       </NavLink>
+      <NavLink to="/compare">
+        Srovnání
+      </NavLink>
       <NavLink to="/history">
         Historie
       </NavLink>
