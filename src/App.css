@@ -1049,3 +1049,109 @@ input[type="number"]::-webkit-outer-spin-button {
     padding: 0.5rem;
   }
 }
+
+/* ===========================================
+   Mimořádné splátky
+   =========================================== */
+.extra-payments-toggle {
+  width: 100%;
+  padding: 1rem;
+  background: var(--card-bg);
+  border: 2px dashed var(--border-color);
+  border-radius: 12px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  margin-bottom: 1.5rem;
+}
+
+.extra-payments-toggle:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background: var(--primary-glow);
+}
+
+.extra-payments-section {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow);
+  border-left: 4px solid var(--success-color);
+}
+
+.extra-payments-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.extra-payments-header h2 {
+  font-size: 1.15rem;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.extra-payments-inputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.savings-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.savings-card {
+  background: var(--bg-color);
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.savings-card.positive {
+  background: rgba(39, 174, 96, 0.1);
+  border: 1px solid rgba(39, 174, 96, 0.3);
+}
+
+.savings-label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.4rem;
+  font-weight: 500;
+}
+
+.savings-value {
+  display: block;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.savings-card.positive .savings-value {
+  color: var(--success-color);
+}
+
+.extra-payments-chart h3 {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+}
+
+@media (max-width: 768px) {
+  .extra-payments-inputs {
+    grid-template-columns: 1fr;
+  }
+
+  .savings-cards {
+    grid-template-columns: 1fr;
+  }
+}

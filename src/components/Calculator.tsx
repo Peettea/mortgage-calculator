@@ -5,6 +5,7 @@ import { ResultsDisplay } from './ResultsDisplay';
 import { AmortizationCharts } from './AmortizationCharts';
 import { CostPieChart } from './CostPieChart';
 import { useMortgage } from '../hooks/useMortgage';
+import { ExtraPayments } from './ExtraPayments';
 import { saveCalculation } from '../api/calculations';
 
 /**
@@ -138,6 +139,10 @@ export const Calculator = () => {
             {saveStatus === 'error' && 'Chyba při ukládání'}
           </button>
         </div>
+      )}
+
+      {results && (
+        <ExtraPayments inputs={inputs} results={results} />
       )}
 
       {results && (

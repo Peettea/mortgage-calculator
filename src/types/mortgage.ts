@@ -25,6 +25,27 @@ export interface AmortizationEntry {
   cumulativeInterest: number;   // kumulativně zaplacené úroky
 }
 
+// Nastavení mimořádných splátek
+export interface ExtraPaymentSettings {
+  monthlyExtra: number;       // pravidelná měsíční mimořádná splátka v Kč
+  oneTimeAmount: number;      // jednorázová mimořádná splátka v Kč
+  oneTimeMonth: number;       // ve kterém měsíci se jednorázová splátka provede
+}
+
+// Výsledky porovnání s/bez mimořádných splátek
+export interface ExtraPaymentComparison {
+  withExtra: {
+    totalMonths: number;
+    totalPaid: number;
+    totalInterest: number;
+    schedule: AmortizationEntry[];
+  };
+  savings: {
+    monthsSaved: number;
+    interestSaved: number;
+  };
+}
+
 // Chybové hlášky pro validaci
 export interface ValidationErrors {
   loanAmount?: string;

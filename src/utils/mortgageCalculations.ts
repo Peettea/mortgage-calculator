@@ -1,4 +1,4 @@
-import type { MortgageInputs, MortgageResults, ValidationErrors, AmortizationEntry } from '../types/mortgage';
+import type { MortgageInputs, MortgageResults, ValidationErrors, AmortizationEntry, ExtraPaymentSettings, ExtraPaymentComparison } from '../types/mortgage';
 
 /**
  * Vypočítá hypoteční splátky pomocí vzorce pro anuitní splátky
@@ -125,4 +125,74 @@ export const generateAmortizationSchedule = (
   }
 
   return schedule;
+};
+
+/**
+ * Vypočítá amortizační plán s mimořádnými splátkami
+ * a porovná výsledky s běžným splácením
+ */
+export const calculateWithExtraPayments = (
+  inputs: MortgageInputs,
+  monthlyPayment: number,
+  extra: ExtraPaymentSettings
+): ExtraPaymentComparison => {
+  const { loanAmount, interestRate, loanPeriodYears } = inputs;
+  const monthlyRate = interestRate / 100 / 12;
+  const maxMonths = loanPeriodYears * 12;
+  const schedule: AmortizationEntry[] = [];
+
+  let remainingBalance = loanAmount;
+  let cumulativePrincipal = 0;
+  let cumulativeInterest = 0;
+  let month = 0;
+
+  while (remainingBalance > 0 && month < maxMonths) {
+    month++;
+    const interestPayment = remainingBalance * monthlyRate;
+    let principalPayment = monthlyPayment - interestPayment;
+
+    // Přičti pravidelnou mimořádnou splátku
+    principalPayment += extra.monthlyExtra;
+
+    // Přičti jednorázovou mimořádnou splátku
+    if (extra.oneTimeAmount > 0 && month === extra.oneTimeMonth) {
+      principalPayment += extra.oneTimeAmount;
+    }
+
+    // Nepřeplať — pokud bys zaplatil víc než zbývá
+    if (principalPayment > remainingBalance) {
+      principalPayment = remainingBalance;
+    }
+
+    remainingBalance = Math.max(0, remainingBalance - principalPayment);
+    cumulativePrincipal += principalPayment;
+    cumulativeInterest += interestPayment;
+
+    schedule.push({
+      month,
+      year: Math.ceil(month / 12),
+      principalPayment: Math.round(principalPayment),
+      interestPayment: Math.round(interestPayment),
+      remainingBalance: Math.round(remainingBalance),
+      cumulativePrincipal: Math.round(cumulativePrincipal),
+      cumulativeInterest: Math.round(cumulativeInterest),
+    });
+  }
+
+  const totalPaid = cumulativePrincipal + cumulativeInterest;
+  const normalTotal = monthlyPayment * maxMonths;
+  const normalInterest = normalTotal - loanAmount;
+
+  return {
+    withExtra: {
+      totalMonths: month,
+      totalPaid: Math.round(totalPaid),
+      totalInterest: Math.round(cumulativeInterest),
+      schedule,
+    },
+    savings: {
+      monthsSaved: maxMonths - month,
+      interestSaved: Math.round(normalInterest - cumulativeInterest),
+    },
+  };
 };
