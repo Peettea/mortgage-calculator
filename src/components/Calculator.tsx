@@ -7,6 +7,7 @@ import { CostPieChart } from './CostPieChart';
 import { useMortgage } from '../hooks/useMortgage';
 import { ExtraPayments } from './ExtraPayments';
 import { FixationSimulation } from './FixationSimulation';
+import { TaxDeduction } from './TaxDeduction';
 import { saveCalculation } from '../api/calculations';
 
 /**
@@ -148,6 +149,10 @@ export const Calculator = () => {
 
       {results && (
         <FixationSimulation inputs={inputs} results={results} />
+      )}
+
+      {results && (
+        <TaxDeduction inputs={inputs} results={results} />
       )}
 
       {results && (
