@@ -9,6 +9,7 @@ import { ExtraPayments } from './ExtraPayments';
 import { FixationSimulation } from './FixationSimulation';
 import { TaxDeduction } from './TaxDeduction';
 import { InflationView } from './InflationView';
+import { BankRates } from './BankRates';
 import { saveCalculation } from '../api/calculations';
 import { exportToPDF } from '../utils/pdfExport';
 
@@ -168,6 +169,14 @@ export const Calculator = () => {
             {shareStatus === 'idle' ? 'Sdílet odkaz' : 'Zkopírováno!'}
           </button>
         </div>
+      )}
+
+      {results && (
+        <BankRates
+          loanAmount={inputs.loanAmount}
+          loanPeriodYears={inputs.loanPeriodYears}
+          onSelectRate={(rate) => form.setValue('interestRate', rate)}
+        />
       )}
 
       {results && (

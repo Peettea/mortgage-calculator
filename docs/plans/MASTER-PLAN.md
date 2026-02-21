@@ -55,17 +55,18 @@
 - Graf nominální vs. reálné hodnoty splátky
 - Pokles kupní síly v procentech
 
-### 6. PDF export
-- Vygenerování PDF reportu s výpočtem
-- Pro schůzku v bance
+### 6. PDF export — HOTOVO
+- Stáhnutí PDF s parametry, výsledky a amortizačním plánem
+- Tlačítko "Stáhnout PDF" vedle uložení
 
-### 7. Sdílení výpočtu
-- Unikátní URL s parametry výpočtu
-- Kdokoliv s odkazem vidí výsledek
+### 7. Sdílení výpočtu — HOTOVO
+- Tlačítko "Sdílet odkaz" zkopíruje URL s parametry
+- Načtení parametrů z URL při otevření
 
-### 8. PWA (Progressive Web App)
-- Instalace na telefon z prohlížeče
-- Offline podpora
+### 8. PWA (Progressive Web App) — HOTOVO
+- vite-plugin-pwa s autoUpdate
+- Manifest, service worker, offline cache
+- Instalovatelné na telefon z prohlížeče
 
 ---
 

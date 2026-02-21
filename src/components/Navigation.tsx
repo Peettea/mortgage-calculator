@@ -16,9 +16,6 @@ export const Navigation = () => {
       <NavLink to="/history">
         Historie
       </NavLink>
-      <NavLink to="/about">
-        O aplikaci
-      </NavLink>
     </nav>
   );
 };
